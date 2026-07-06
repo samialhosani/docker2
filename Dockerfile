@@ -32,6 +32,15 @@ COPY materials/ /app/materials/
 # Expose the API port
 EXPOSE 8000
 
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import requests; requests.get('http://localhost:8000/health')" || exit 1
+
+# Accept API key at runtime (not baked into image)
+ENV GROQ_API_KEY=""
+ENV OPENAI_API_KEY=""
+ENV ANTHROPIC_API_KEY=""
+
 # Command to run when the container starts:
 # 1. Run data.py to convert CSVs to education_platform.db
 # 2. Start the FastAPI server on 0.0.0.0 so it is accessible from outside the container

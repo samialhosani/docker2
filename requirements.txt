@@ -23,3 +23,5 @@ langchain-ollama
 # Document Loaders & Embeddings
 pypdf
 sentence-transformers
+
+python-multipart==0.0.6

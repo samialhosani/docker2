@@ -87,7 +87,6 @@ class MaterialManager:
         cursor = conn.cursor()
 
         try:
-
             cursor.execute(
                 """
                 SELECT l.lecture_unique_id, l.lecture_number, l.lecture_title_english, c.course_academic_year
@@ -180,51 +179,3 @@ class MaterialManager:
         )
         lecture.available_files = files
         return lecture
-
-
-if __name__ == "__main__":
-
-    mock_path = Path("./materials/1/C001/1")
-    mock_path.mkdir(parents=True, exist_ok=True)
-    (mock_path / "Lecture_1_Slides.pdf").touch()
-    (mock_path / "Lab_1_Code.py").touch()
-
-    manager = MaterialManager()
-
-    print("--- Step 1: User selects a course ---")
-
-    selected_course_id = "C001"
-    print(f"User selected: {selected_course_id}\n")
-
-    print("--- Step 2: Fetching Available Lectures ---")
-    lectures = manager.get_course_lectures(selected_course_id)
-
-    if not lectures:
-        print("No lectures found for this course in the database.")
-    else:
-        for idx, lec in enumerate(lectures):
-            print(f"[{idx + 1}] Lecture {lec.lecture_number}: {lec.title}")
-
-        print("\n--- Step 3: User selects a lecture to chat about ---")
-
-        selected_lecture = lectures[0]
-        print(f"User selected: {selected_lecture.title}\n")
-
-        print("--- Step 4: Fetching Material Files for RAG ---")
-
-        active_lecture_state = manager.select_lecture(
-            selected_lecture, selected_course_id
-        )
-
-        if not active_lecture_state.available_files:
-            print("No files found in the directory for this lecture.")
-        else:
-            print(
-                f"Found {len(active_lecture_state.available_files)} files ready for the AI Agent:"
-            )
-            for file in active_lecture_state.available_files:
-                print(f" -> {file.file_name} (Path: {file.file_path})")
-
-            print(
-                "\n✅ READY FOR STEP 3 (RAG). You can now pass these file paths to the Document Loaders!"
-            )

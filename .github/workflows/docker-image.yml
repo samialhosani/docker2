@@ -1,31 +1,22 @@
-name: Build and Push GHCR Image
+name: Docker Build
 
 on:
   push:
-    branches: [ "main" ]
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Build and push
-        uses: docker/build-push-action@v5
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
-          tags: ghcr.io/samialhosani/docker:latest
+          push: false
+          tags: local/education-ai:latest

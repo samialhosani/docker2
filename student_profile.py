@@ -25,7 +25,7 @@ class UpcomingExam(BaseModel):
 
 class PendingAssignment(BaseModel):
     assignment_id: str
-    course_id: str 
+    course_id: str
     course_name: str
     status: str
     deadline: str
@@ -84,7 +84,6 @@ def get_student_profile(identifier: str, db_path: str, reference_date: Optional[
     cursor = conn.cursor()
 
     try:
-        # Fetch Student Info
         cursor.execute("""
             SELECT Student_ID, student_full_name_english, student_email_address, 
                    student_system_type, student_department_english, student_academic_year, student_gpa
@@ -95,7 +94,6 @@ def get_student_profile(identifier: str, db_path: str, reference_date: Optional[
 
         student_id = student_row["Student_ID"]
 
-        # Fetch Enrollments
         cursor.execute("""
             SELECT e.Course_ID, c.course_name_english, c.course_department_english, e.status,
                    c.course_academic_year, c.course_academic_term
@@ -171,8 +169,8 @@ def get_student_profile(identifier: str, db_path: str, reference_date: Optional[
             if deadline_obj and deadline_obj >= reference_date:
                 upcoming_assignments.append(PendingAssignment(
                     assignment_id=row["assignment_id"],
-                    course_id=row["Course_ID"],          # Added
-                    course_name=row["course_name_english"], # Added
+                    course_id=row["Course_ID"],
+                    course_name=row["course_name_english"],
                     status=row["submission_status"],
                     deadline=row["deadline"],
                     max_grade=float(row["assignment_max_grade"] or 0),
